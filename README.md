@@ -5,7 +5,7 @@ and the [DummyJSON](https://dummyjson.com) API. It’s intentionally scoped to f
 pages, but the engineering around them — rendering strategy, state, testing,
 CI — is meant to reflect how I’d build the real thing.
 
-> **Live demo:** _add your Vercel URL here after deploying_
+> **Live demo:** https://storefront-sage-omega-34.vercel.app
 
 ---
 
