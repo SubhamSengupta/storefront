@@ -4,7 +4,6 @@ import "./globals.css";
 import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 
 // `--font-sans` feeds the shadcn theme token; `--font-geist-mono` backs `font-mono`.
 const geistSans = Geist({ variable: "--font-sans", subsets: ["latin"] });
@@ -45,7 +44,6 @@ export default function RootLayout({
         <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
           {children}
         </main>
-        <Footer />
       </body>
     </html>
   );
