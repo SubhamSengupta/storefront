@@ -49,12 +49,18 @@ The build output confirms the intent: `/` is `○ (Static)` and
   chose on-demand ISR to demonstrate the at-scale pattern and documented the
   cost. Switching to full SSG is a one-line change (return all ids from
   `generateStaticParams`).
-- **Trade-off (soft 404):** because a route-level `loading.tsx` makes the
-  response stream, `notFound()` on an invalid product renders the not-found UI
-  but returns HTTP 200 (with a `noindex` meta) rather than 404 — documented
-  Next.js streaming behavior. We kept the loading skeleton (better UX, and
-  removing it did not change the status since RSC streams by default). See
-  Known Limitations in the README.
+- **Content-first, no route-level `loading.tsx`.** An early version used
+  `loading.tsx` skeletons. Testing with JavaScript disabled revealed the
+  problem: a route-level `loading.tsx` creates a Suspense boundary, so Next ships
+  the _skeleton_ as the static shell and streams the real content into a block
+  that only appears once JS runs the swap. Consequences: (1) with JS off — and
+  for non-JS crawlers — the catalog showed only a skeleton; (2) the streaming
+  shell forced `notFound()` to return HTTP **200** (a soft 404). Removing
+  route-level loading makes the static/ISR HTML contain real content directly
+  (crawlable, works without JS) **and** restores a true **HTTP 404** for invalid
+  products. The cost — no skeleton during client-side navigation — is negligible
+  for prerendered, prefetched pages. The `/cart` page is the deliberate exception
+  (client-only, so it hydrates a skeleton).
 
 ## Alternatives considered
 

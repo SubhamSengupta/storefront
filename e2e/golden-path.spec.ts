@@ -42,8 +42,11 @@ test("browse, add to cart, view cart, and persist across reload", async ({
   ).toHaveAccessibleName(/1 item/i);
 });
 
-test("an invalid product id renders the not-found page", async ({ page }) => {
-  await page.goto("/products/999999");
+test("an invalid product id returns 404 and renders the not-found page", async ({
+  page,
+}) => {
+  const response = await page.goto("/products/999999");
+  expect(response?.status()).toBe(404);
   // Scope to <main> so we don't also match the document <title>.
   await expect(
     page.locator("main").getByText(/product not found/i),

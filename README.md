@@ -19,8 +19,9 @@ CI — is meant to reflect how I’d build the real thing.
 | Persistence         | `localStorage` via Zustand `persist` (survives reloads), hydration-safe          |
 | Navigation          | Header with site name + cart icon showing a live item count                      |
 
-Plus: streaming loading skeletons, error & not-found boundaries, per-product SEO
-metadata (Open Graph), an accessibility pass, unit/component/E2E tests, and CI.
+Plus: content-first rendering (SEO/no-JS friendly), error & not-found
+boundaries with real HTTP 404s, per-product SEO metadata (Open Graph), an
+accessibility pass, unit/component/E2E tests, and CI.
 
 ## Tech stack
 
@@ -74,10 +75,18 @@ Pagination is **path-based** (`/products/page/2`), not `?page=`, specifically so
 the list stays statically renderable — reading `searchParams` would force dynamic
 rendering. See [ADR 0001](docs/adr/0001-rendering-strategy.md).
 
-Loading UI is **navigation-time, not initial-load**: because catalog pages are
-prerendered, a hard load sends complete HTML with no skeleton; `loading.tsx`
-provides the instant loading state during client-side navigation (and the cold
-first render of an uncached product).
+**Content-first rendering (no route-level `loading.tsx`).** An early version used
+`loading.tsx` skeletons, but a route-level `loading.tsx` creates a Suspense
+boundary that ships the _skeleton_ as the static shell and streams the real
+content into a block that only appears once JS runs — so with JavaScript
+disabled (and for non-JS crawlers) the catalog showed a skeleton, and it also
+turned `notFound()` into a soft 404 (HTTP 200). Removing route-level loading in
+favour of content-first rendering means the static/ISR HTML contains the real
+products and product details directly (crawlable, works without JS) **and**
+invalid products return a true **HTTP 404**. Client-side navigation between these
+prerendered, prefetched pages is effectively instant, so the skeletons weren't
+buying much. The cart page is the deliberate exception — it's client-only
+(localStorage), so it renders a skeleton until hydrated.
 
 ### Project structure
 
@@ -85,7 +94,7 @@ first render of an uncached product).
 src/
 ├─ app/
 │  ├─ page.tsx                     # Home = product list page 1 (ISR)
-│  ├─ loading.tsx / error.tsx      # Route boundaries
+│  ├─ error.tsx                    # Route error boundary
 │  ├─ products/
 │  │  ├─ page/[page]/              # Path-based pagination (ISR + generateStaticParams)
 │  │  └─ [id]/                     # Detail (on-demand ISR, generateMetadata, not-found)
@@ -138,11 +147,14 @@ yarn test:e2e      # Playwright (starts the app automatically)
 
 ## Known limitations
 
-- **Invalid product → HTTP 200 (soft 404).** The not-found UI renders correctly
-  with a `noindex` meta, but the status is 200, not 404. This is documented
-  Next.js behavior: a route-level `loading.tsx` (and RSC streaming generally)
-  flushes the response before `notFound()` runs, so the status can’t be changed.
-  Getting a hard 404 would mean giving up streaming on that route.
+- **No skeletons on client-side navigation.** Removing route-level `loading.tsx`
+  (see the rendering section) means navigating between pages relies on Next's
+  prefetching + router pending state rather than a skeleton. For these static,
+  prefetched pages that transition is near-instant; the trade was made in favour
+  of content-first HTML and correct 404s.
+- **The cart page requires JavaScript.** It reads `localStorage`, so with JS
+  disabled it shows a skeleton. This is intrinsic to a client-side cart and
+  doesn't affect the SEO-relevant catalog/detail pages.
 - **E2E depends on the live DummyJSON API.** Server-side rendering fetches the
   real API, which Playwright can’t intercept (those requests originate on the
   Next server, not the browser), so the E2E needs network access.
