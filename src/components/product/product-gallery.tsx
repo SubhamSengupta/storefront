@@ -27,11 +27,16 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-contain p-4"
           priority
+          fetchPriority="high"
         />
       </div>
 
       {images.length > 1 && (
-        <div className="flex flex-wrap gap-2" role="list">
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Product image thumbnails"
+        >
           {images.map((src, index) => (
             <button
               key={src}

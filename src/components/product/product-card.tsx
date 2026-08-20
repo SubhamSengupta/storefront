@@ -8,8 +8,9 @@ import { Rating } from "./rating";
 interface ProductCardProps {
   product: Product;
   /**
-   * Whether to eager-load the image. Set for the first row so the LCP image
-   * isn't lazy-loaded; the rest lazy-load as they scroll into view.
+   * Marks this as the LCP image: eager-loads + preloads it and hints
+   * fetchPriority="high". Set only on the first card — making several images
+   * high-priority just makes them compete for bandwidth and delays the LCP.
    */
   priority?: boolean;
 }
@@ -34,10 +35,11 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             priority={priority}
+            fetchPriority={priority ? "high" : undefined}
           />
         </div>
         <CardContent className="flex flex-1 flex-col gap-2 p-4">
-          <h3 className="line-clamp-2 text-sm font-medium">{product.title}</h3>
+          <h2 className="line-clamp-2 text-sm font-medium">{product.title}</h2>
           <Rating value={product.rating} />
         </CardContent>
         <CardFooter className="p-4 pt-0">

@@ -92,14 +92,13 @@ function PageLink({
   );
 
   if (disabled) {
+    // A real disabled <button> communicates the state natively and (unlike a
+    // <span>, which has an implicit generic role) may legitimately carry an
+    // aria-label. buttonVariants already dims + disables pointer events.
     return (
-      <span
-        className={cn(className, "pointer-events-none opacity-50")}
-        aria-disabled="true"
-        {...aria}
-      >
+      <button type="button" disabled className={className} {...aria}>
         {children}
-      </span>
+      </button>
     );
   }
 

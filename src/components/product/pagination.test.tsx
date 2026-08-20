@@ -15,10 +15,7 @@ describe("Pagination", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByLabelText("Previous page")).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+    expect(screen.getByLabelText("Previous page")).toBeDisabled();
   });
 
   it("links pages to the correct hrefs (page 1 is canonical /)", () => {

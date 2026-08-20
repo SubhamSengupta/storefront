@@ -48,7 +48,11 @@ export function CartLineItem({ item, onNavigate }: CartLineItemProps) {
         </span>
 
         <div className="mt-auto flex items-center gap-2 pt-2">
-          <div className="flex items-center rounded-md border">
+          <div
+            className="flex items-center rounded-md border"
+            role="group"
+            aria-label={`Quantity for ${item.title}`}
+          >
             <Button
               variant="ghost"
               size="icon"
@@ -58,10 +62,7 @@ export function CartLineItem({ item, onNavigate }: CartLineItemProps) {
             >
               <Minus className="size-3.5" />
             </Button>
-            <span
-              className="w-8 text-center text-sm tabular-nums"
-              aria-label={`Quantity: ${item.quantity}`}
-            >
+            <span className="w-8 text-center text-sm tabular-nums">
               {item.quantity}
             </span>
             <Button
