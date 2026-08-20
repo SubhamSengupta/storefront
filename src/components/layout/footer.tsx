@@ -16,7 +16,6 @@ export function Footer() {
           </a>
           .
         </p>
-        <p>Built for an architecture assessment.</p>
       </div>
     </footer>
   );
