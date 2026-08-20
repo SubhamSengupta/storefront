@@ -22,8 +22,12 @@ test("browse, add to cart, view cart, and persist across reload", async ({
   const addToCart = page.getByRole("button", { name: /add to cart/i });
   await expect(addToCart).toBeVisible();
 
-  // Add to cart → the header cart trigger reflects one item.
+  // Add to cart → the button becomes a quantity stepper, and the header cart
+  // trigger reflects one item.
   await addToCart.click();
+  await expect(
+    page.getByRole("button", { name: /increase quantity/i }),
+  ).toBeVisible();
   const cartTrigger = page.getByRole("button", { name: /open cart/i });
   await expect(cartTrigger).toHaveAccessibleName(/1 item/i);
 

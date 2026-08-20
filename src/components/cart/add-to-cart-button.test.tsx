@@ -29,13 +29,47 @@ describe("AddToCartButton", () => {
     expect(items[0]).toMatchObject({ id: 1, quantity: 1 });
   });
 
-  it("confirms the addition visually and to assistive tech", async () => {
+  it("swaps the button for a quantity stepper once in the cart", async () => {
     const user = userEvent.setup();
     render(<AddToCartButton product={product} />);
 
     await user.click(screen.getByRole("button", { name: /add to cart/i }));
 
-    expect(screen.getByRole("button", { name: /added/i })).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(/added to cart/i);
+    // Add button is gone; stepper shows quantity 1.
+    expect(
+      screen.queryByRole("button", { name: /add to cart/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/1 item in cart/i);
+
+    // Increase → 2.
+    await user.click(
+      screen.getByRole("button", { name: /increase quantity/i }),
+    );
+    expect(useCartStore.getState().items[0].quantity).toBe(2);
+  });
+
+  it("removes the item and restores the button when decreased to zero", async () => {
+    const user = userEvent.setup();
+    useCartStore.setState({
+      items: [
+        {
+          id: 1,
+          title: "Test Product",
+          price: 10,
+          thumbnail: "t.webp",
+          quantity: 1,
+        },
+      ],
+    });
+    render(<AddToCartButton product={product} />);
+
+    await user.click(
+      screen.getByRole("button", { name: /decrease quantity/i }),
+    );
+
+    expect(useCartStore.getState().items).toHaveLength(0);
+    expect(
+      screen.getByRole("button", { name: /add to cart/i }),
+    ).toBeInTheDocument();
   });
 });
