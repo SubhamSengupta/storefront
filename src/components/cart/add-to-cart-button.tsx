@@ -41,26 +41,24 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
   return (
     <div className="flex items-center gap-3">
       <div
-        className="flex items-center rounded-md border"
+        className="flex items-center rounded-lg border"
         role="group"
         aria-label={`Quantity for ${product.title}`}
       >
         <Button
           variant="ghost"
-          size="icon"
-          className="size-11"
+          size="icon-lg"
           onClick={() => updateQuantity(product.id, quantity - 1)}
           aria-label={`Decrease quantity of ${product.title}`}
         >
           <Minus className="size-4" />
         </Button>
-        <span className="w-12 text-center text-base font-medium tabular-nums">
+        <span className="w-10 text-center text-sm font-medium tabular-nums">
           {quantity}
         </span>
         <Button
           variant="ghost"
-          size="icon"
-          className="size-11"
+          size="icon-lg"
           onClick={() => updateQuantity(product.id, quantity + 1)}
           aria-label={`Increase quantity of ${product.title}`}
         >
