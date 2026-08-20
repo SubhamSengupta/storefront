@@ -38,7 +38,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <span className="text-muted-foreground text-lg tabular-nums line-through">
                 {formatPrice(product.price)}
               </span>
-              <Badge variant="destructive">
+              <Badge variant="success">
                 -{Math.round(product.discountPercentage)}%
               </Badge>
             </>
