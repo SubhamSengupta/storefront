@@ -127,4 +127,10 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4 defaults buttons to `cursor: default`; restore the pointer for
+     interactive (non-disabled) buttons and role="button" elements. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }

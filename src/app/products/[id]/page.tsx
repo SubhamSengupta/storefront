@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProduct } from "@/lib/api/products";
 import { ProductDetail } from "@/components/product/product-detail";
+import { BackButton } from "@/components/product/back-button";
 
 // On-demand ISR (see docs/adr/0001-rendering-strategy.md): 3600s = REVALIDATE_SECONDS.
 export const revalidate = 3600;
@@ -52,5 +53,10 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  return (
+    <div className="space-y-6">
+      <BackButton />
+      <ProductDetail product={product} />
+    </div>
+  );
 }
