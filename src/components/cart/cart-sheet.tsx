@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -50,6 +51,9 @@ export function CartSheet() {
       <SheetContent className="flex w-full flex-col gap-0 sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Your cart</SheetTitle>
+          <SheetDescription className="sr-only">
+            Products you&apos;ve added to your cart.
+          </SheetDescription>
         </SheetHeader>
 
         {!hasMounted ? null : items.length === 0 ? (

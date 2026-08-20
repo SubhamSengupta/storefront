@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { getTotalPages } from "@/lib/api/products";
 import { Catalog } from "@/components/product/catalog";
 
 // Genuine ISR (see docs/adr/0001-rendering-strategy.md): 3600s = REVALIDATE_SECONDS.
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}): Promise<Metadata> {
+  const { page } = await params;
+  return { title: `Products — Page ${page}` };
+}
 
 /**
  * Prebuild pages 2..N at build time (page 1 is canonical at `/`). The catalog is
